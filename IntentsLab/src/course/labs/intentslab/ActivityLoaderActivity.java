@@ -76,20 +76,23 @@ public class ActivityLoaderActivity extends Activity {
 
 		Log.i(TAG, "Entered startImplicitActivation()");
 
-		// TODO - Create a base intent for viewing a URL 
+		// Create a base intent for viewing a URL 
 		// (HINT:  second parameter uses parse() from the Uri class)
+		Uri address = Uri.parse(URL);
+		Intent baseIntent = new Intent(Intent.ACTION_VIEW, address);
 		
-		
-		// TODO - Create a chooser intent, for choosing which Activity
+		// Create a chooser intent, for choosing which Activity
 		// will carry out the baseIntent. Store the Intent in the 
 		// chooserIntent variable below. HINT: using the Intent class' 
 		// createChooser())
-		
-		Intent chooserIntent = null;
+		Intent chooserIntent = Intent.createChooser(baseIntent, CHOOSER_TEXT);
 
 		Log.i(TAG,"Chooser Intent Action:" + chooserIntent.getAction());
-		// TODO - Start the chooser Activity, using the chooser intent
-		startActivity(chooserIntent);
+		// Start the chooser Activity, using the chooser intent
+		// Verify the intent will resolve to at least one activity
+		if (baseIntent.resolveActivity(getPackageManager()) != null) {
+			startActivity(chooserIntent);
+		}
 
 	}
 
@@ -98,14 +101,12 @@ public class ActivityLoaderActivity extends Activity {
 
 		Log.i(TAG, "Entered onActivityResult()");
 		
-		// TODO - Process the result only if this method received both a
+		// Process the result only if this method received both a
 		// RESULT_OK result code and a recognized request code
 		// If so, update the Textview showing the user-entered text.
 		if (resultCode == RESULT_OK && requestCode == GET_TEXT_REQUEST_CODE){
-			mUserTextView = data.getStringExtra();
+			mUserTextView.setText(data.getStringExtra("result"));
 		}
-		
-
 
 	}
 }

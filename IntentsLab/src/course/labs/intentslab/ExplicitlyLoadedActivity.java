@@ -49,10 +49,11 @@ public class ExplicitlyLoadedActivity extends Activity {
 		// Save user provided input from the EditText field
 		String input = mEditText.getText().toString();
 		// Create a new intent and save the input from the EditText field as an extra
-		Intent back = new Intent();
-		back.putExtra(, input);
+		// Intent back = new Intent(ExplicitlyLoadedActivity.this, );
+		Intent back = getIntent();
+		back.putExtra("result", input);
 		// Set Activity's result with result code RESULT_OK
-		setResult(RESULT_OK);
+		setResult(RESULT_OK, back);
 		// Finish the Activity
 		finish();
 	}
