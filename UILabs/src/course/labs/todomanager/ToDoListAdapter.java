@@ -86,8 +86,9 @@ public class ToDoListAdapter extends BaseAdapter {
 
 
 		//TODO - Get the current ToDoItem
-		final ToDoItem toDoItem = null;
-
+		final ToDoItem toDoItem = (ToDoItem) getItemPosition();
+		
+		
 		//TODO - Inflate the View for this ToDoItem
 		// from todo_item.xml.
 		RelativeLayout itemLayout = null;
