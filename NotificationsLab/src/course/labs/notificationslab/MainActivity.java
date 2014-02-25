@@ -89,7 +89,7 @@ public class MainActivity extends Activity implements SelectionListener {
 			// are execute() args correct???
 			// Start new AsyncTask to download Tweets from network
 
-			new DownloaderTask(MainActivity.this).execute(URL_LGAGA, URL_TSWIFT, URL_RBLACK);
+			new DownloaderTask(this).execute(URL_TSWIFT, URL_RBLACK, URL_LGAGA);
 			
 			// Set up a BroadcastReceiver to receive an Intent when download
 			// finishes. 
@@ -98,14 +98,13 @@ public class MainActivity extends Activity implements SelectionListener {
 				public void onReceive(Context context, Intent intent) {
 
 					log("BroadcastIntent received in MainActivity");
-
-					// TODO:				
+				
 					// Check to make sure this is an ordered broadcast
 					// Let sender know that the Intent was received
 					// by setting result code to RESULT_OK
 					
 					if(isOrderedBroadcast()){
-						setResult(RESULT_OK);
+						setResultCode(RESULT_OK);
 					}
 				}
 			};
@@ -179,8 +178,9 @@ public class MainActivity extends Activity implements SelectionListener {
 		// Register the BroadcastReceiver to receive a 
 		// DATA_REFRESHED_ACTION broadcast
 
-		//IntentFilter intentFilter = new IntentFilter(DATA_REFRESHED_ACTION);
+		if(mRefreshReceiver != null){
 		registerReceiver(mRefreshReceiver, new IntentFilter(DATA_REFRESHED_ACTION));
+		}
 		
 	}
 
@@ -188,8 +188,10 @@ public class MainActivity extends Activity implements SelectionListener {
 	protected void onPause() {
 
 		// Unregister the BroadcastReceiver
-
+		
+		if(mRefreshReceiver != null){
 		unregisterReceiver(mRefreshReceiver);
+		}
 		
 		super.onPause();
 
