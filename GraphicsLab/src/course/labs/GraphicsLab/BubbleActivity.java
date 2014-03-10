@@ -135,11 +135,20 @@ public class BubbleActivity extends Activity {
 				// Implement onFling actions.
 				// You can get all Views in mFrame using the
 				// ViewGroup.getChildCount() method
-
-				for(int i = 0; i <= mFrame.getChildCount(); i++){
-					BubbleView currentBubble = (BubbleView) mFrame.getChildAt(i);
-					if(currentBubble.intersects(event1.getX(), event1.getY())){
+				
+				int i = 0; int count = mFrame.getChildCount();
+				BubbleView currentBubble = (BubbleView) mFrame.getChildAt(i);
+				for(i = 0; i <= count; i++){
+					currentBubble = (BubbleView) mFrame.getChildAt(i);
+					if(currentBubble.intersects(event1.getRawX(), event1.getRawY())){
 						currentBubble.deflect(velocityX, velocityY);
+						return true;
+					}else{
+						BubbleView newBubble = new BubbleView(mFrame.getContext(), event2.getRawX(), event2.getRawY());
+						newBubble.start();
+						mFrame.addView(newBubble);
+						newBubble.deflect(velocityX, velocityY);
+						return true;
 					}
 				}
 				
@@ -157,23 +166,29 @@ public class BubbleActivity extends Activity {
 				// Implement onSingleTapConfirmed actions.
 				// You can get all Views in mFrame using the
 				// ViewGroup.getChildCount() method
-
-				if (mFrame.getChildCount() == 0){
+				
+				int i = 0;
+				int count = mFrame.getChildCount();
+				BubbleView newBubble = new BubbleView(mFrame.getContext(), event.getRawX(), event.getRawY());
+				BubbleView currentBubble = (BubbleView) mFrame.getChildAt(i);
+				
+				if (count == 0){
 					// create new bubble, start it and add it to group view
-					BubbleView newBubble = new BubbleView(getApplicationContext(), event.getX(), event.getY());
 					newBubble.start();
 					mFrame.addView(newBubble);
+					return true;
 				}else{
-					for(int i = 0; i <= mFrame.getChildCount(); i++){
-						//BubbleView currentBubble =(BubbleView) mFrame.getChildAt(i);
-						if( ((BubbleView) mFrame.getChildAt(i)).intersects(event.getX(), event.getY()) ){
+						for(i = 0; i <= count; i++){
+						currentBubble = (BubbleView) mFrame.getChildAt(i);
+						if( currentBubble.intersects(event.getRawX(), event.getRawY()) ){
 							// pop the bubble
-							((BubbleView) mFrame.getChildAt(i)).stop(true);
-					}else{
-						// create new bubble, start it and add it to group view
-						BubbleView newBubble = new BubbleView(getApplicationContext(), event.getX(), event.getY());
-						newBubble.start();
-						mFrame.addView(newBubble);
+							currentBubble.stop(true);
+							return true;
+						}else{
+							// create new bubble, start it and add it to group view
+							newBubble.start();
+							mFrame.addView(newBubble);
+							return true;
 					}
 				}
 				}
@@ -254,7 +269,7 @@ public class BubbleActivity extends Activity {
 			if (speedMode == RANDOM) {
 				
 				// set rotation in range [1..3]
-				mDRotate = new Random().nextInt(3)+1;
+				mDRotate = r.nextInt(3)+1;
 
 			} else {
 			
@@ -288,10 +303,10 @@ public class BubbleActivity extends Activity {
 				// Limit movement speed in the x and y
 				// direction to [-3..3].
 				
-				mXPos = new Random().nextFloat() * mDisplayWidth;
-				mYPos = new Random().nextFloat() * mDisplayHeight;
-				mDx = new Random().nextFloat() * (new Random().nextInt(7)-3);
-				mDy = new Random().nextFloat() * (new Random().nextInt(7)-3);
+				mXPos = r.nextFloat() * mDisplayWidth;
+				mYPos = r.nextFloat() * mDisplayHeight;
+				mDx = r.nextFloat() * (r.nextInt(7)-3);
+				mDy = r.nextFloat() * (r.nextInt(7)-3);
 				break;
 			
 			}
@@ -306,12 +321,12 @@ public class BubbleActivity extends Activity {
 			} else {
 			
 				// set scaled bitmap size in range [1..3] * BITMAP_SIZE
-				mScaledBitmapWidth = (new Random().nextInt(3)+1) * BITMAP_SIZE;
+				mScaledBitmapWidth = (r.nextInt(3)+1) * BITMAP_SIZE;
 			
 			}
 
 			// create the scaled bitmap using size set above
-			mScaledBitmap = Bitmap.createScaledBitmap(mBitmap, mScaledBitmapWidth, mScaledBitmapWidth, false);
+			mScaledBitmap = Bitmap.createScaledBitmap(mBitmap, mScaledBitmapWidth, mScaledBitmapWidth, true);
 		}
 
 		// Start moving the BubbleView & updating the display
@@ -333,7 +348,7 @@ public class BubbleActivity extends Activity {
 					// stop the BubbleView's Worker Thread. 
 					// Otherwise, request that the BubbleView be redrawn. 
 					
-					if(BubbleView.this.moveWhileOnScreen()){
+					if(!BubbleView.this.moveWhileOnScreen()){
 						BubbleView.this.stop(false);
 					}else{
 						BubbleView.this.postInvalidate();
@@ -347,10 +362,8 @@ public class BubbleActivity extends Activity {
 
 			// Return true if the BubbleView intersects position (x,y)
 			
-			if( this.mXPos-mScaledBitmapWidth / 2 <=x &&
-					x <= this.mXPos+mScaledBitmapWidth / 2 &&
-					y >= this.mYPos-mScaledBitmapWidth / 2 &&
-					y <= this.mYPos+mScaledBitmapWidth / 2 ){
+			if(x > mXPos && x < mXPos + mScaledBitmapWidth &&
+					y > mYPos && y < mYPos + mScaledBitmapWidth){
 				return true;
 			}else{
 
@@ -399,8 +412,8 @@ public class BubbleActivity extends Activity {
 
 			// set mDx and mDy to be the new velocities divided by the REFRESH_RATE
 			
-			this.mDx = velocityX / REFRESH_RATE;
-			this.mDy = velocityY / REFRESH_RATE;
+			mDx = velocityX / REFRESH_RATE;
+			mDy = velocityY / REFRESH_RATE;
 
 		}
 
@@ -419,11 +432,11 @@ public class BubbleActivity extends Activity {
 			
 			// Rotate the canvas by current rotation
 
-			canvas.rotate(mRotate);
+			canvas.rotate(mRotate, mXPos + mScaledBitmapWidth / 2, mYPos + mScaledBitmapWidth / 2);
 			
 			// draw the bitmap at it's new location
 			
-			canvas.drawBitmap(mBitmap, mXPos, mYPos, mPainter);
+			canvas.drawBitmap(mScaledBitmap, mXPos, mYPos, mPainter);
 			
 			// restore the canvas
 			
@@ -439,10 +452,10 @@ public class BubbleActivity extends Activity {
 			mXPos += mDx;
 			mYPos += mDy;
 			if(isOutOfView()){
-				return true;
+				return false;
 			}else{		
 			
-			return false;
+			return true;
 			}
 			
 		}
@@ -451,10 +464,10 @@ public class BubbleActivity extends Activity {
 
 			// Return true if the BubbleView has exited the screen
 			
-			if (mXPos < 0 - mScaledBitmapWidth
-					|| mXPos > mDisplayHeight + mScaledBitmapWidth
-					|| mYPos < 0 - mScaledBitmapWidth
-					|| mYPos > mDisplayWidth + mScaledBitmapWidth) {
+			if (mXPos < 0
+					|| mXPos > mDisplayWidth + mScaledBitmapWidth
+					|| mYPos < 0
+					|| mYPos > mDisplayHeight + mScaledBitmapWidth){
 				return true;
 				
 			}else{
@@ -496,7 +509,7 @@ public class BubbleActivity extends Activity {
 	
 	private static void log (String message) {
 		try {
-			Thread.sleep(500);
+			Thread.sleep(0);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
