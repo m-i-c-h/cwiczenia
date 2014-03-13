@@ -149,8 +149,10 @@ public class PlaceViewAdapter extends CursorAdapter {
 
 			// TODO - Insert new record into the ContentProvider
 
-			mContext.getContentResolver().insert(PlaceBadgesContract.BASE_URI, list);
-			mContext.getContentResolver().notifyChange();
+			ContentValues values = new ContentValues();
+			values.put(PlaceBadgesContract.BADGES_TABLE_NAME, "new place");
+			mContext.getContentResolver().insert(PlaceBadgesContract.CONTENT_URI, values);
+			mContext.getContentResolver().notifyChange(PlaceBadgesContract.BASE_URI, null);
         
         }
 
@@ -164,10 +166,10 @@ public class PlaceViewAdapter extends CursorAdapter {
 
 		list.clear();
 
-		// TODO - delete all records in the ContentProvider
+		// delete all records in the ContentProvider
 
 		mContext.getContentResolver().delete(PlaceBadgesContract.CONTENT_URI, null, null);
-		mContext.getContentResolver().notifyChange();
+		mContext.getContentResolver().notifyChange(PlaceBadgesContract.BASE_URI, null);
          
 	}
 

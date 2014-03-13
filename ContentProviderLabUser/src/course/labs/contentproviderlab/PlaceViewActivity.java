@@ -204,13 +204,13 @@ public class PlaceViewActivity extends ListActivity implements
 		// Create a new CursorLoader and return it
 		
 		// String used to filter badges with country names
-				String select = PlaceBadgesContract.COUNTRY_NAME + " NOTNULL";
+				String select = PlaceBadgesContract.COUNTRY_NAME + "== NOTNULL";
 		
 		// String used for defining the sort order
 				String sortOrder = PlaceBadgesContract._ID + " ASC";
 		
         
-				return new CursorLoader(this, PlaceBadgesContract.BASE_URI, CONTACTS_ROWS, select, null, sortOrder);
+				return new CursorLoader(this, PlaceBadgesContract.BASE_URI, null, select, null, sortOrder);
 	}
 
 	@Override
