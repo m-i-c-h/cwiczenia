@@ -53,7 +53,7 @@ public class PlaceViewActivity extends ListActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        // TODO - Set up the app's user interface
+        // Set up the app's user interface
         // This class is a ListActivity, so it has its own ListView
 		
 
@@ -114,7 +114,8 @@ public class PlaceViewActivity extends ListActivity implements
 		// Create and set empty PlaceViewAdapter
         // ListView's adapter should be a PlaceViewAdapter called mCursorAdapter
 		
-		mCursorAdapter = new PlaceViewAdapter(this, null, 0);
+		Cursor query = getContentResolver().query(PlaceBadgesContract.CONTENT_URI, null, null, null, null);
+		mCursorAdapter = new PlaceViewAdapter(this, query, 0);
 		setListAdapter(mCursorAdapter);
 		
 		// Initialize a CursorLoader
@@ -210,7 +211,7 @@ public class PlaceViewActivity extends ListActivity implements
 				String sortOrder = PlaceBadgesContract._ID + " ASC";
 		
         
-				return new CursorLoader(this, PlaceBadgesContract.BASE_URI, null, select, null, sortOrder);
+				return new CursorLoader(this, PlaceBadgesContract.CONTENT_URI, null, select, null, sortOrder);
 	}
 
 	@Override

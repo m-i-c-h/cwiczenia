@@ -65,19 +65,19 @@ public class PlaceViewAdapter extends CursorAdapter {
 
 		if (null != newCursor) {
 
-        // TODO - clear the ArrayList list so it contains
+        // clear the ArrayList list so it contains
 		// the current set of PlaceRecords. Use the 
 		// getPlaceRecordFromCursor() method to add the
 		// current place to the list
 		
 		list.clear();
 		
-		list.add(getPlaceRecordFromCursor(newCursor));
-            
-            
-            
-            
-            
+		if (newCursor.moveToFirst()){
+			do{
+				list.add(getPlaceRecordFromCursor(newCursor));
+			} while (newCursor.moveToNext());
+		}
+		
             // Set the NotificationURI for the new cursor
 			newCursor.setNotificationUri(mContext.getContentResolver(),
 					PlaceBadgesContract.CONTENT_URI);
@@ -150,9 +150,13 @@ public class PlaceViewAdapter extends CursorAdapter {
 			// TODO - Insert new record into the ContentProvider
 
 			ContentValues values = new ContentValues();
-			values.put(PlaceBadgesContract.BADGES_TABLE_NAME, "new place");
+			values.put(PlaceBadgesContract.FLAG_BITMAP_PATH, listItem.getFlagBitmapPath());
+			values.put(PlaceBadgesContract.COUNTRY_NAME, listItem.getCountryName());
+			values.put(PlaceBadgesContract.PLACE_NAME, listItem.getPlace());
+			values.put(PlaceBadgesContract.LAT, listItem.getLat());
+			values.put(PlaceBadgesContract.LON, listItem.getLon());
 			mContext.getContentResolver().insert(PlaceBadgesContract.CONTENT_URI, values);
-			mContext.getContentResolver().notifyChange(PlaceBadgesContract.BASE_URI, null);
+			mContext.getContentResolver().notifyChange(PlaceBadgesContract.CONTENT_URI, null);
         
         }
 
@@ -169,7 +173,7 @@ public class PlaceViewAdapter extends CursorAdapter {
 		// delete all records in the ContentProvider
 
 		mContext.getContentResolver().delete(PlaceBadgesContract.CONTENT_URI, null, null);
-		mContext.getContentResolver().notifyChange(PlaceBadgesContract.BASE_URI, null);
+		mContext.getContentResolver().notifyChange(PlaceBadgesContract.CONTENT_URI, null);
          
 	}
 
